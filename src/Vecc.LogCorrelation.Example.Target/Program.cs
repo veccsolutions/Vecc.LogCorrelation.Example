@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
+using Serilog.Formatting.Json;
 
 namespace Vecc.LogCorrelation.Example.Target
 {
@@ -19,6 +15,11 @@ namespace Vecc.LogCorrelation.Example.Target
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseSerilog((context, config) =>
+                {
+                    config.WriteTo.Debug(new JsonFormatter(renderMessage: true), LogEventLevel.Verbose);
+                    config.MinimumLevel.Information();
+                })
                 .UseStartup<Startup>();
     }
 }
